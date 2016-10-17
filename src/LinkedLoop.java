@@ -26,7 +26,7 @@ public class LinkedLoop<E> implements LoopADT<E> {
 	/** This loop's currently focused node. */
 	private DblListnode<E> currentItemNode = null;
 	/** A count of nodes in the loop. */
-	int itemCount;
+	private int itemCount;
 	
 	/**
 	 * Constructor: Default. Takes no arguments and builds empty list.
@@ -170,7 +170,7 @@ public class LinkedLoop<E> implements LoopADT<E> {
      * @return an iterator for this Loop
      */
 	@Override
-	public Iterator<E> iterator() {
+	public LinkedLoopIterator<E> iterator() {
 		return new LinkedLoopIterator<E>(currentItemNode);
 	}
 }

@@ -32,7 +32,7 @@ public class LinkedLoopIterator<E> implements Iterator<E> {
 	 */
 	@Override
 	public boolean hasNext() {
-		if (currNode.getNext() == null || currNode.getNext() == startNode)
+		if (currNode.getNext() == null || (currNode.getNext() == startNode && currNode.getNext() != currNode.getPrev())  )
 		{
 			return false;
 		}

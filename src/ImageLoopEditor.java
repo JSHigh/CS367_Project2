@@ -15,6 +15,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
@@ -141,8 +142,14 @@ public final class ImageLoopEditor {
             				System.out.println("warning: file already exists, will be overwritten");
             			}
             			try {
-							FileOutputStream saveOS = new FileOutputStream(saveToFile);
-							DisplayCurrentContext(lLoopImage);
+							FileWriter saveOS = new FileWriter(saveToFile);
+							LinkedLoopIterator<Image> lLoopIter = lLoopImage.iterator();
+							while (lLoopIter.hasNext())
+							{
+								saveOS.write(GetOneContext(lLoopIter.next()));
+							}
+							saveOS.close();
+							// DisplayCurrentContext(lLoopImage);
 						} catch (Exception e) {
 							System.out.println("unable to save");
 							e.printStackTrace();
@@ -156,6 +163,9 @@ public final class ImageLoopEditor {
 	
                 case 'a':
                 	CheckRemainder(remainder);
+                	// TODO: need to do better validation on image filenames
+                	Image imageToAdd = new Image(remainder);
+                	lLoopImage.add(imageToAdd);
                 	break;
 
                 case 'i':
@@ -216,27 +226,47 @@ public final class ImageLoopEditor {
 		}
 	}
 	
-	private final static void DisplayCurrentContext(LinkedLoop<Image> lLoopImage) throws EmptyLoopException {
+	private final static String[] GetCurrentContext(LinkedLoop<Image> lLoopImage) throws EmptyLoopException {
+		String[] sContext = {"", "", ""};
 		lLoopImage.previous();
-		String prevCont = GetCurrentContext(lLoopImage.getCurrent());
+		String prevCont = GetOneContext(lLoopImage.getCurrent());
 		lLoopImage.next();
-		String currCont = GetCurrentContext(lLoopImage.getCurrent());
+		String currCont = GetOneContext(lLoopImage.getCurrent());
 		lLoopImage.next();
-		String nextCont = GetCurrentContext(lLoopImage.getCurrent());
+		String nextCont = GetOneContext(lLoopImage.getCurrent());
 		lLoopImage.previous();
-		if (prevCont != currCont && prevCont != "")
+		if (prevCont == currCont && currCont != "")
 		{
-			System.out.println(prevCont);
+			prevCont = "";
 		}
-		System.out.println("--> " + currCont + " <--");
-		if (nextCont != currCont && nextCont != "")
+		if (nextCont == currCont && currCont != "")
 		{
-			System.out.println(nextCont);
+			nextCont = "";
+		}
+		sContext[0] = prevCont;
+		sContext[1] = "--> " + currCont + " <--";
+		sContext[2] = nextCont;
+		return sContext;
+	}
+	private final static void DisplayCurrentContext(LinkedLoop<Image> lLoopImage) throws EmptyLoopException {
+		String[] sContext = GetCurrentContext(lLoopImage);
+		for (String s : sContext)
+		{
+			if (s != "")
+			{
+				System.out.println(s);
+			}
 		}
 	}
 	
-	private final static String GetCurrentContext(Image image) {
-		return image.getFile() + " " + image.getDuration() + " " + image.getTitle();
+	private final static String GetOneContext(Image image) {
+		String ret = image.getFile() + " " + image.getDuration();
+		String fTitle = image.getTitle();
+		if (fTitle != "")
+		{
+			ret += " " + fTitle;
+		}
+		return ret;
 	}
 }
 
