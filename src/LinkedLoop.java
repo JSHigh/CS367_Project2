@@ -108,15 +108,18 @@ public class LinkedLoop<E> implements LoopADT<E> {
 		{
 			throw new EmptyLoopException();
 		}
+		
 		Boolean currHasPrev = (currentItemNode.getPrev() != currentItemNode);
 		Boolean currHasNext = (currentItemNode.getNext() != currentItemNode);
 		E itemDataVal = currentItemNode.getData();
+		
 		if (!currHasPrev && !currHasNext) // case where we're removing the last node
 		{
 			currentItemNode = null;
 			itemCount = 0;
 			return itemDataVal;
 		}
+		
 		else // catchall case
 		{
 			// point previous node to current's next
