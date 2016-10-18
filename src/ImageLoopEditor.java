@@ -195,7 +195,17 @@ public final class ImageLoopEditor {
         return false;
         }
 	
-    /**
+    private static boolean FileIsInImagesFolder(String fileName) {
+		// String fileName = "images/"+getFile();
+    	File fTemp = new File(fileName);
+    	if (fTemp.getParent() == "test")
+    	{
+    		;
+    	}
+		return false;
+	}
+
+	/**
      * Print options for commands.
      */
 	private final static void printOptions(){
