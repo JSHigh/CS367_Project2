@@ -1,6 +1,20 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+///////////////////////////////////////////////////////////////////////////////
+//Main Class File:  ImageLoopEditor
+//File:             LinkedLoopIterator
+//Semester:         CS 367, Fall 2016
+//
+//Author1:          Justin High (jshigh@wisc.edu)
+//CS Login:         high
+//Author2:			Aaron Gordner (agordner@wisc.edu)
+//CS Login:			gordner
+//Lecturer's Name:  Charles Fischer
+//Lab Section:      004
+//
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * Represents an iterator on a doubly linked loop.
  *

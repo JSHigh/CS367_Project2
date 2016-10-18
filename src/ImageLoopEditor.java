@@ -5,7 +5,7 @@
 //					EmptyLoopException, Image, LinkedLoopIterator, LoopADT
 // Semester:        CS367 Fall 2016
 //
-// Author:          Justin High (jshigh@wisc.edu)
+// Author1:          Justin High (jshigh@wisc.edu)
 // CS Login:        high
 // Author2:			Aaron Gordner (agordner@wisc.edu)
 // CS Login:		gordner
@@ -22,12 +22,6 @@ import java.util.*;
 /**
  * Application for editing and viewing a loop of images.
  *
- * Bugs: none known
- *
- * @author		Justin High Copyright (2016)
- * @version		1.0
- * @author2     Aaron Gordner
- * @see LinkedLoop, DblListnode, Image
  */
 public final class ImageLoopEditor {
 
@@ -196,17 +190,18 @@ public final class ImageLoopEditor {
                 				String line = loadFromFileScanner.nextLine();
                 				line = line.replace("[", "");
                 				line = line.replace("]", "");
-                				//need new Image object created from the input
-                				//lLoopImage is the doubly linked loop to use
-                				//parse out filename, duration, and titleloadFromFileScanner
-                				//if "filename" is not in the "images" folder, show warning
+
                 				StringTokenizer tokens = new StringTokenizer(line, " ");
-                				//String[] tokens = line.split(" ");
-                				String filename = tokens.nextToken();
-                				if (tokens.countTokens() < 3)
-                				{
-                					continue;
+                				
+                				//make sure we have at least one token before continuing
+                				if (tokens.countTokens() == 0) {
+                					break;
                 				}
+                				
+                				//filename is first
+                				String filename = tokens.nextToken();
+
+                				//followed by duration
                 				int duration = 0;
                 				try
                 				{
@@ -217,6 +212,7 @@ public final class ImageLoopEditor {
                 					e.printStackTrace();
                 				}
                 				
+                				//next we need to create the title from any remaining tokens, stripping "" from the front and back
                 				String title = "";
                 				while (tokens.hasMoreTokens()){
                 					if (title == "") {
@@ -227,6 +223,7 @@ public final class ImageLoopEditor {
                 					}
                 				}
                 				
+                				//finally, create the new image
                 				if (FileIsInImagesFolder(filename)) {
                                 	Image lineImage = new Image(filename, title, duration);
                                 	if (lLoopImage.isEmpty()) {

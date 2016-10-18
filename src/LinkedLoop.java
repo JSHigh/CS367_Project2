@@ -4,14 +4,14 @@
 // File:             LinkedLoop
 // Semester:         CS367 Fall 2016
 //
-// Author:           Justin High (jshigh@wisc.edu)
+// Author1:          Justin High (jshigh@wisc.edu)
 // CS Login:         high
+// Author2:			 Aaron Gordner (agordner@wisc.edu)
+// CS Login:		 gordner
 // Lecturer's Name:  Charles Fischer
 // Lab Section:      004
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-import java.util.Iterator;
 
 /**
  * A doubly-linked, circular loop of generic elements.
@@ -34,6 +34,7 @@ public class LinkedLoop<E> implements LoopADT<E> {
 	public LinkedLoop() {
 		itemCount = 0;
 	}
+	
     /**
      * Adds the given item immediately <em>before</em> the current 
      * item.  After the new item has been added, the new item becomes the 
