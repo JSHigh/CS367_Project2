@@ -7,6 +7,8 @@
 //
 // Author:          Justin High (jshigh@wisc.edu)
 // CS Login:        high
+// Author2:			Aaron Gordner (agordner@wisc.edu)
+// CS Login:		gordner
 // Lecturer's Name: Charles Fischer
 // Lab Section:     004
 //
@@ -24,6 +26,7 @@ import java.util.Scanner;
  *
  * @author		Justin High Copyright (2016)
  * @version		1.0
+ * @author2     Aaron Gordner
  * @see LinkedLoop, DblListnode, Image
  */
 public final class ImageLoopEditor {
@@ -215,7 +218,7 @@ public final class ImageLoopEditor {
                 				String title = tokens[2];
                 				
                 				//TODO now check if image exists in /images/ folder
-                				String directory = "/images/";
+                				String directory = "images/";  //need /images/ or just images/?
                 				boolean check = new File(directory, filename).exists();
                 				
                 				if (!check) {
@@ -244,6 +247,8 @@ public final class ImageLoopEditor {
 	
                 case 'a':
                 	CheckRemainder(remainder);
+                	
+                	//TODO: this doesn't work but is needed in l and i as well
             		if (FileIsInImagesFolder(remainder))
             		{
                     	imageToAdd = new Image(remainder);
@@ -267,6 +272,23 @@ public final class ImageLoopEditor {
                 	imageToAdd = new Image(remainder);
                 	lLoopImage.add(imageToAdd);
                 	DisplayCurrentContext(lLoopImage);
+                	
+//                	if (FileIsInImagesFolder(remainder))
+//            		{
+//                    	imageToAdd = new Image(remainder);
+//                    	if (lLoopImage.isEmpty()) {
+//                    		lLoopImage.add(imageToAdd);
+//                    	}
+//                    	else {
+//                    		lLoopImage.next();
+//                    		lLoopImage.add(imageToAdd);
+//                    	}
+//                    	DisplayCurrentContext(lLoopImage);
+//            		}
+//            		else
+//            		{
+//            			System.out.println("Warning: " + remainder + " is not in images folder");
+//            		}
                     break;
                 
                 // search command
@@ -275,10 +297,8 @@ public final class ImageLoopEditor {
                 		System.out.println("no images");
                 	}
                 	else {
-                    	//TODO check for quotes on the string?
-                		//TODO make sure remainder is exactly as the user entered
                     	CheckRemainder(remainder);
-                    	String search = remainder;
+                    	String search = remainder.replaceAll("\"", "");  //trim "" from start and end of string for proper searching
                     	LinkedLoopIterator<Image> searchIter = lLoopImage.iterator();
                     	boolean found = false;
                     	while (searchIter.hasNext()) {
@@ -291,6 +311,7 @@ public final class ImageLoopEditor {
                     		searchIter.next();
                     	}
                     	
+                    	//TODO: always saying "not found"
                     	if (found == true) {
                     		DisplayCurrentContext(lLoopImage);
                     	}
@@ -385,7 +406,7 @@ public final class ImageLoopEditor {
                 		int spaces = 0;
                 		try
                 		{
-                			Integer.parseInt(remainder);
+                			spaces = Integer.parseInt(remainder);
                 		}
                 		catch (NumberFormatException e) {}
                 		int i;
@@ -429,7 +450,7 @@ public final class ImageLoopEditor {
                 		int duration = 0;
                 		try
                 		{
-                			Integer.parseInt(remainder);
+                			duration = Integer.parseInt(remainder);
                 		}
                 		catch (NumberFormatException e)
                 		{
@@ -447,7 +468,7 @@ public final class ImageLoopEditor {
                 	}
                 	else {
                 		CheckRemainder(remainder);
-                		String title = remainder;
+                		String title = remainder.replaceAll("\"", "");
                 		Image titleImg = lLoopImage.getCurrent();
                 		titleImg.setTitle(title);
                 		DisplayCurrentContext(lLoopImage);
