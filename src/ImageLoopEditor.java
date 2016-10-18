@@ -14,13 +14,7 @@
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -45,7 +39,7 @@ public final class ImageLoopEditor {
 	 */
 	public static void main(String [ ] args)
 	{
-		boolean Debug = true;	// TODO: set to false
+		boolean Debug = false;	// TODO: set to false
     	
     	// Check whether one or zero command-line arguments are given.
 		// If not, display "invalid command-line arguments" and quit.
@@ -153,8 +147,14 @@ public final class ImageLoopEditor {
             			try {
 							FileWriter saveOS = new FileWriter(saveToFile);
 							LinkedLoopIterator<Image> lLoopIter = lLoopImage.iterator();
+							int linecount = 0;
 							while (lLoopIter.hasNext())
 							{
+								linecount++;
+								if (linecount > 1)
+								{
+									saveOS.write("\n");
+								}
 								saveOS.write(lLoopIter.next().toString());
 							}
 							saveOS.close();
@@ -167,35 +167,58 @@ public final class ImageLoopEditor {
                 	break;
                 	
                 case 'l':
+                	Boolean cont = false;
                 	CheckRemainder(remainder);
+                	// boolean test = FileIsInImagesFolder(remainder);
                 	File loadFromFile = new File(remainder);
                 	//check for existence and readability
-                	if ((loadFromFile.exists() == false) || (loadFromFile.canWrite()))
+                	if (loadFromFile.exists())
                 	{
-                		System.out.println("unable to load");
+                		cont = true;
                 	}
-                	else
+                	if (!cont)
+                	{
+                		loadFromFile = new File("\\\\images", remainder);
+                		if (!loadFromFile.exists())
+                		{
+                			System.out.println("unable to load");
+                		}
+                	}
+                	if (cont)
                 	{
                 		try {
                 			Scanner loadFromFileScanner = new Scanner(loadFromFile);
                 			while (loadFromFileScanner.hasNextLine())
                 			{
                 				String line = loadFromFileScanner.nextLine();
+                				line = line.replace("[", "");
+                				line = line.replace("]", "");
                 				//need new Image object created from the input
                 				//lLoopImage is the doubly linked loop to use
                 				//parse out filename, duration, and titleloadFromFileScanner
                 				//if "filename" is not in the "images" folder, show warning
-                				String delims = "[]+";
-                				String[] tokens = line.split(delims);
+                				String[] tokens = line.split(" ");
                 				String filename = tokens[0];
-                				int duration = Integer.parseInt(tokens[1]);
+                				if (tokens.length < 3)
+                				{
+                					continue;
+                				}
+                				int duration = 0;
+                				try
+                				{
+                					duration = Integer.parseInt(tokens[1]);
+                				}
+                				catch (NumberFormatException e)
+                				{
+                					e.printStackTrace();
+                				}
                 				String title = tokens[2];
                 				
                 				//TODO now check if image exists in /images/ folder
                 				String directory = "/images/";
                 				boolean check = new File(directory, filename).exists();
                 				
-                				if (check) {
+                				if (!check) {
                 					System.out.println("Warning: " + filename + " is not in images folder");
                 				}
                 				
@@ -207,9 +230,13 @@ public final class ImageLoopEditor {
                 			}
                 			loadFromFileScanner.close();
                 		}
-            			catch (Exception e)
+            			catch (IllegalStateException e)
             			{
             				System.out.println("problem with input file");
+                		}
+                		catch (FileNotFoundException e)
+                		{
+                			System.out.println("problem with input file");
                 		}
                 	}
                 	
@@ -217,17 +244,22 @@ public final class ImageLoopEditor {
 	
                 case 'a':
                 	CheckRemainder(remainder);
-                	// TODO: need to do better validation on image filenames
-                	//add AFTER the current image, so move forward one position first
-                	imageToAdd = new Image(remainder);
-                	if (lLoopImage.isEmpty()) {
-                		lLoopImage.add(imageToAdd);
-                	}
-                	else {
-                		lLoopImage.next();
-                		lLoopImage.add(imageToAdd);
-                	}
-                	DisplayCurrentContext(lLoopImage);
+            		if (FileIsInImagesFolder(remainder))
+            		{
+                    	imageToAdd = new Image(remainder);
+                    	if (lLoopImage.isEmpty()) {
+                    		lLoopImage.add(imageToAdd);
+                    	}
+                    	else {
+                    		lLoopImage.next();
+                    		lLoopImage.add(imageToAdd);
+                    	}
+                    	DisplayCurrentContext(lLoopImage);
+            		}
+            		else
+            		{
+            			System.out.println("Warning: " + remainder + " is not in images folder");
+            		}
                 	break;
 
                 case 'i':
@@ -282,8 +314,7 @@ public final class ImageLoopEditor {
                 		else {
 	                		LinkedLoopIterator<Image> dispIter = lLoopImage.iterator();
 	                		while (dispIter.hasNext()) {
-	                			dispIter.next();
-	                			System.out.println(lLoopImage.getCurrent().toString());
+	                			System.out.println(dispIter.next().toString());
 	                			
 	                		}
                 		}
@@ -291,7 +322,8 @@ public final class ImageLoopEditor {
                 	break;
                 	
                 case 'p':
-                	//TODO: bugs: images are really tiny, may not actually be getting found
+                	// TODO: bugs: images are really tiny, may not actually be getting found
+                	// TODO: think this is fixed - jhigh
                 	if (lLoopImage.isEmpty()){
                 		System.out.println("no images");
                 	}
@@ -350,7 +382,12 @@ public final class ImageLoopEditor {
                 	}
                 	else {
                 		CheckRemainder(remainder);
-                		int spaces = Integer.parseInt(remainder);
+                		int spaces = 0;
+                		try
+                		{
+                			Integer.parseInt(remainder);
+                		}
+                		catch (NumberFormatException e) {}
                 		int i;
                 		
                 		//number is negative, loop backwards
@@ -389,7 +426,15 @@ public final class ImageLoopEditor {
                 	}
                 	else {
                 		CheckRemainder(remainder);
-                		int duration = Integer.parseInt(remainder);
+                		int duration = 0;
+                		try
+                		{
+                			Integer.parseInt(remainder);
+                		}
+                		catch (NumberFormatException e)
+                		{
+                			
+                		}
                 		Image durationImg = lLoopImage.getCurrent();
                 		durationImg.setDuration(duration);
                 		DisplayCurrentContext(lLoopImage);
@@ -426,15 +471,18 @@ public final class ImageLoopEditor {
         return false;
         }
 	
-    private static boolean FileIsInImagesFolder(String fileName) {
+    private static boolean FileIsInImagesFolder(String fileName) throws InvalidCommandException {
 		// String fileName = "images/"+getFile();
     	File fTemp = new File(fileName);
-    	if (fTemp.getParent() == "test")
-    	{
+    	File fTempAppend = new File("images", fileName);
+    	try {
+    		return (fTemp.exists() || fTempAppend.exists());
+    	}
+    	catch (RuntimeException e) {
     		;
     	}
-		return false;
-	}
+    	return false;
+    }
 
 	/**
      * Print options for commands.
@@ -484,6 +532,10 @@ public final class ImageLoopEditor {
 		{
 			nextCont = "";
 		}
+		if (prevCont.equals(nextCont))
+		{
+			prevCont = "";
+		}
 		sContext[0] = prevCont;
 		sContext[1] = "--> " + currCont + " <--";
 		sContext[2] = nextCont;
@@ -499,15 +551,4 @@ public final class ImageLoopEditor {
 			}
 		}
 	}
-	
-//	private final static String GetOneContext(Image image) {
-//		String ret = image.getFile() + " " + image.getDuration();
-//		String fTitle = image.getTitle();
-//		if (fTitle != "")
-//		{
-//			ret += " " + fTitle;
-//		}
-//		return ret;
-//	}
 }
-
