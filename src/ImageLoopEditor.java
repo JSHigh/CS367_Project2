@@ -17,7 +17,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Application for editing and viewing a loop of images.
@@ -200,22 +200,32 @@ public final class ImageLoopEditor {
                 				//lLoopImage is the doubly linked loop to use
                 				//parse out filename, duration, and titleloadFromFileScanner
                 				//if "filename" is not in the "images" folder, show warning
-                				String[] tokens = line.split(" ");
-                				String filename = tokens[0];
-                				if (tokens.length < 3)
+                				StringTokenizer tokens = new StringTokenizer(line, " ");
+                				//String[] tokens = line.split(" ");
+                				String filename = tokens.nextToken();
+                				if (tokens.countTokens() < 3)
                 				{
                 					continue;
                 				}
                 				int duration = 0;
                 				try
                 				{
-                					duration = Integer.parseInt(tokens[1]);
+                					duration = Integer.parseInt(tokens.nextToken());
                 				}
                 				catch (NumberFormatException e)
                 				{
                 					e.printStackTrace();
                 				}
-                				String title = tokens[2];
+                				
+                				String title = "";
+                				while (tokens.hasMoreTokens()){
+                					if (title == "") {
+                						title = (tokens.nextToken()).replaceAll("\"", "");
+                					}
+                					else {
+                						title = title + " " + (tokens.nextToken()).replaceAll("\"", "");
+                					}
+                				}
                 				
                 				if (FileIsInImagesFolder(filename)) {
                                 	Image lineImage = new Image(filename, title, duration);
