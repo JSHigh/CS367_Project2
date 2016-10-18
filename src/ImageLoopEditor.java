@@ -217,20 +217,24 @@ public final class ImageLoopEditor {
                 				}
                 				String title = tokens[2];
                 				
-                				//TODO now check if image exists in /images/ folder
-                				String directory = "images/";  //need /images/ or just images/?
-                				boolean check = new File(directory, filename).exists();
+                				if (FileIsInImagesFolder(filename)) {
+                                	Image lineImage = new Image(filename, title, duration);
+                                	if (lLoopImage.isEmpty()) {
+                                		lLoopImage.add(lineImage);
+                                	}
+                                	else {
+                                		lLoopImage.add(lineImage);
+                                	}
+                                	
+                                	//since we add before the current item, the next should always be the first we added
+                                	lLoopImage.next();
+                        		}
                 				
-                				if (!check) {
-                					System.out.println("Warning: " + filename + " is not in images folder");
-                				}
-                				
-                				Image lineImage = new Image(filename, title, duration);
-                				lLoopImage.add(lineImage);
-                				
-                				//since we add before the current item, the next should always be the first we added
-                				lLoopImage.next();
+                        		else {
+                        			System.out.println("Warning: " + remainder + " is not in images folder");
+                        		}
                 			}
+                			
                 			loadFromFileScanner.close();
                 		}
             			catch (IllegalStateException e)
@@ -248,7 +252,6 @@ public final class ImageLoopEditor {
                 case 'a':
                 	CheckRemainder(remainder);
                 	
-                	//TODO: this doesn't work but is needed in l and i as well
             		if (FileIsInImagesFolder(remainder))
             		{
                     	imageToAdd = new Image(remainder);
@@ -268,27 +271,21 @@ public final class ImageLoopEditor {
                 	break;
 
                 case 'i':
-                	CheckRemainder(remainder);
-                	imageToAdd = new Image(remainder);
-                	lLoopImage.add(imageToAdd);
-                	DisplayCurrentContext(lLoopImage);
-                	
-//                	if (FileIsInImagesFolder(remainder))
-//            		{
-//                    	imageToAdd = new Image(remainder);
-//                    	if (lLoopImage.isEmpty()) {
-//                    		lLoopImage.add(imageToAdd);
-//                    	}
-//                    	else {
-//                    		lLoopImage.next();
-//                    		lLoopImage.add(imageToAdd);
-//                    	}
-//                    	DisplayCurrentContext(lLoopImage);
-//            		}
-//            		else
-//            		{
-//            			System.out.println("Warning: " + remainder + " is not in images folder");
-//            		}
+                	if (FileIsInImagesFolder(remainder))
+            		{
+                    	imageToAdd = new Image(remainder);
+                    	if (lLoopImage.isEmpty()) {
+                    		lLoopImage.add(imageToAdd);
+                    	}
+                    	else {
+                    		lLoopImage.add(imageToAdd);
+                    	}
+                    	DisplayCurrentContext(lLoopImage);
+            		}
+            		else
+            		{
+            			System.out.println("Warning: " + remainder + " is not in images folder");
+            		}
                     break;
                 
                 // search command
@@ -304,14 +301,14 @@ public final class ImageLoopEditor {
                     	while (searchIter.hasNext()) {
                     		Image searchImg = lLoopImage.getCurrent();
                     		String imgTitle = searchImg.getTitle();
-                    		if (imgTitle == search){
+                    		
+                    		if (imgTitle.equals(search)){
                     			found = true;
                     			break;
                     		}
                     		searchIter.next();
                     	}
                     	
-                    	//TODO: always saying "not found"
                     	if (found == true) {
                     		DisplayCurrentContext(lLoopImage);
                     	}
@@ -343,8 +340,6 @@ public final class ImageLoopEditor {
                 	break;
                 	
                 case 'p':
-                	// TODO: bugs: images are really tiny, may not actually be getting found
-                	// TODO: think this is fixed - jhigh
                 	if (lLoopImage.isEmpty()){
                 		System.out.println("no images");
                 	}
@@ -492,6 +487,12 @@ public final class ImageLoopEditor {
         return false;
         }
 	
+    /**
+     * Checks if the given filename is in the images folder
+     * @param fileName - file to check if it exists in the images folder
+     * @return If the file exists in the folder
+     * @throws InvalidCommandException
+     */
     private static boolean FileIsInImagesFolder(String fileName) throws InvalidCommandException {
 		// String fileName = "images/"+getFile();
     	File fTemp = new File(fileName);
@@ -536,6 +537,12 @@ public final class ImageLoopEditor {
 		}
 	}
 	
+	/**
+	 * Gets the current, previous, and next images and displays their data
+	 * @param lLoopImage - Image object to find the context for
+	 * @return String array of previous image, current image, and next image
+	 * @throws EmptyLoopException
+	 */
 	private final static String[] GetCurrentContext(LinkedLoop<Image> lLoopImage) throws EmptyLoopException {
 		String[] sContext = {"", "", ""};
 		lLoopImage.previous();
@@ -562,6 +569,13 @@ public final class ImageLoopEditor {
 		sContext[2] = nextCont;
 		return sContext;
 	}
+	
+	/**
+	 * Displays the context for the current image. Will display the previous image, current image (with arrows around it),
+	 * 			and the next image. All images will have their title (if it exists), filename, and duration
+	 * @param lLoopImage - Image to show context for
+	 * @throws EmptyLoopException
+	 */
 	private final static void DisplayCurrentContext(LinkedLoop<Image> lLoopImage) throws EmptyLoopException {
 		String[] sContext = GetCurrentContext(lLoopImage);
 		for (String s : sContext)
