@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Represents an iterator on a doubly linked loop.
@@ -10,20 +11,18 @@ import java.util.Iterator;
  * @see 		LinkedLoop
  */
 public class LinkedLoopIterator<E> implements Iterator<E> {
-	/** the node in the linked loop that is the starting point. */
-	DblListnode<E> startNode;
-	/** the node in the linked loop that we're current on. */
-	DblListnode<E> currNode;
-	/** boolean to see if we've done at least one full loop. */
-	Boolean didALoop;
+	/** count of steps items we've looked at in the loop */
+	private int itemCount;
+	/** reference to the loop we're iterating over */
+	LinkedLoop<E> loop = new LinkedLoop<E>();
 	
 	/**
 	 * Constructor: Creates a new iterator over a doubly linked loop
-	 * @param node a node in the doubly linked loop to start from
+	 * @param lLoop the doubly linked loop to iterate over
 	 */
-	public LinkedLoopIterator(DblListnode<E> node) {
-		startNode = currNode = node;
-		didALoop = false;
+	public LinkedLoopIterator(LinkedLoop<E> lLoop) {
+		itemCount = 0;
+		this.loop = lLoop;
 	}
 	
 	/**
@@ -32,11 +31,7 @@ public class LinkedLoopIterator<E> implements Iterator<E> {
 	 */
 	@Override
 	public boolean hasNext() {
-		if (currNode.getNext() == null || (currNode.getNext() == startNode && currNode.getNext() != currNode.getPrev())  )
-		{
-			return false;
-		}
-		return true;
+		return itemCount < loop.size();
 	}
 
 	/**
@@ -44,22 +39,15 @@ public class LinkedLoopIterator<E> implements Iterator<E> {
 	 * @return the data held in the next node.
 	 */
 	@Override
-	public E next() {
-		E currVal = currNode.getData();
-		currNode = currNode.getNext();
-		if (currNode == startNode)
+	public E next() throws EmptyLoopException {
+		if (!this.hasNext())
 		{
-			didALoop = true;
+			throw new NoSuchElementException();
 		}
-		return currVal;
-	}
-	
-	/**
-	 * Returns whether or not the loop has been traversed at least once.
-	 * @return boolean whether or not the loop has been traversed at least once.
-	 */
-	public Boolean fullLoop(){
-		return didALoop;
+		itemCount++;
+		E dataReturn = loop.getCurrent();
+		loop.next();
+		return dataReturn;
 	}
 	
 	public void remove(E item){

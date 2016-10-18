@@ -1,4 +1,4 @@
-public class EmptyLoopException extends Exception {
+public class EmptyLoopException extends RuntimeException {
 
 	/**
 	 * An exception when an illegal operation is performed on an empty list.

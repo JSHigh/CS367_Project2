@@ -62,6 +62,9 @@ public class LinkedLoop<E> implements LoopADT<E> {
 			
 			// and update B's previous to new node
 			currentItemNode.setPrev(itemNode);
+			
+			// set newly inserted node as current
+			currentItemNode = itemNode;
 		}
 		else // have empty chain
 		{
@@ -174,6 +177,6 @@ public class LinkedLoop<E> implements LoopADT<E> {
      */
 	@Override
 	public LinkedLoopIterator<E> iterator() {
-		return new LinkedLoopIterator<E>(currentItemNode);
+		return new LinkedLoopIterator<E>(this);
 	}
 }

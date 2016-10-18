@@ -217,7 +217,6 @@ public final class ImageLoopEditor {
 	
                 case 'a':
                 	CheckRemainder(remainder);
-                	// TODO: bugs: does not set current image to the new image, is one ahead
                 	// TODO: need to do better validation on image filenames
                 	//add AFTER the current image, so move forward one position first
                 	imageToAdd = new Image(remainder);
@@ -276,11 +275,17 @@ public final class ImageLoopEditor {
                 	}
                 	else {
                 		//get an iterator, loop through, use toString
-                		LinkedLoopIterator<Image> dispIter = lLoopImage.iterator();
-                		while (dispIter.hasNext()) {
-                			Image display = lLoopImage.getCurrent();
-                			System.out.println(display.toString());
-                			dispIter.next();
+                		if (lLoopImage.size() == 1)
+                		{
+                			System.out.println(lLoopImage.getCurrent().toString());
+                		}
+                		else {
+	                		LinkedLoopIterator<Image> dispIter = lLoopImage.iterator();
+	                		while (dispIter.hasNext()) {
+	                			dispIter.next();
+	                			System.out.println(lLoopImage.getCurrent().toString());
+	                			
+	                		}
                 		}
                 	}
                 	break;
@@ -471,11 +476,11 @@ public final class ImageLoopEditor {
 		lLoopImage.next();
 		String nextCont = lLoopImage.getCurrent().toString();
 		lLoopImage.previous();
-		if (prevCont == currCont && currCont != "")
+		if (prevCont.equals(currCont) && currCont != "")
 		{
 			prevCont = "";
 		}
-		if (nextCont == currCont && currCont != "")
+		if (nextCont.equals(currCont) && currCont != "")
 		{
 			nextCont = "";
 		}
