@@ -13,6 +13,7 @@ import javax.swing.JLabel;
  * <b>Do not modify anything in this file</b> (except possibly displayPicture() if you know
  * what you are doing)
  */
+@SuppressWarnings("unused")
 public class Image {
 	private String fileName;  // name of file containing the image
 	private String title;     // title (or caption) of the image

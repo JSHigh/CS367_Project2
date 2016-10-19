@@ -152,7 +152,17 @@ public final class ImageLoopEditor {
 								{
 									saveOS.write("\n");
 								}
-								saveOS.write(lLoopIter.next().toString());
+								Image imageToWrite = lLoopIter.next();
+								saveOS.write(imageToWrite.getFile() + " " + imageToWrite.getDuration() + " ");
+								String title = imageToWrite.getTitle();
+								if (title != "")
+								{
+									saveOS.write(title);
+								}
+								else
+								{
+									saveOS.write("\"\"");
+								}
 							}
 							saveOS.close();
 							// DisplayCurrentContext(lLoopImage);
@@ -175,7 +185,7 @@ public final class ImageLoopEditor {
                 	}
                 	if (!cont)
                 	{
-                		loadFromFile = new File("\\\\images", remainder);
+                		loadFromFile = new File("images", remainder);
                 		if (!loadFromFile.exists())
                 		{
                 			System.out.println("unable to load");
@@ -309,7 +319,7 @@ public final class ImageLoopEditor {
                     		Image searchImg = lLoopImage.getCurrent();
                     		String imgTitle = searchImg.getTitle();
                     		
-                    		if (imgTitle.equals(search)){
+                    		if (imgTitle.contains(search)){
                     			found = true;
                     			break;
                     		}
@@ -410,8 +420,11 @@ public final class ImageLoopEditor {
                 		{
                 			spaces = Integer.parseInt(remainder);
                 		}
-                		catch (NumberFormatException e) {}
-                		int i;
+                		catch (NumberFormatException e)
+                		{
+                			throw new InvalidCommandException();
+                		}
+                		int i = 0;
                 		
                 		//number is negative, loop backwards
                 		if (spaces < 0) {
@@ -449,18 +462,18 @@ public final class ImageLoopEditor {
                 	}
                 	else {
                 		CheckRemainder(remainder);
-                		int duration = 0;
+                		int duration = -1;
                 		try
                 		{
                 			duration = Integer.parseInt(remainder);
                 		}
                 		catch (NumberFormatException e)
                 		{
-                			
+                			throw new InvalidCommandException();
                 		}
-                		Image durationImg = lLoopImage.getCurrent();
+               			Image durationImg = lLoopImage.getCurrent();
                 		durationImg.setDuration(duration);
-                		DisplayCurrentContext(lLoopImage);
+                		DisplayCurrentContext(lLoopImage);	
                 	}
                 	break;
                 	
