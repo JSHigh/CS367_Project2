@@ -55,6 +55,10 @@ public final class ImageLoopEditor {
     	{
     		String inputFileName = args[0];
     		File inputFile = new File(inputFileName);
+    		if (!inputFile.exists())
+    		{
+    			inputFile = new File("images", inputFileName);
+    		}
     		Scanner inputFileScanner = null;
     		try {
     			inputFileScanner = new Scanner(inputFile);
