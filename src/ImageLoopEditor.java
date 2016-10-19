@@ -238,7 +238,6 @@ public final class ImageLoopEditor {
                 				}
                 				
                 				//finally, create the new image
-                				if (FileIsInImagesFolder(filename)) {
                                 	Image lineImage = new Image(filename, title, duration);
                                 	if (lLoopImage.isEmpty()) {
                                 		lLoopImage.add(lineImage);
@@ -250,11 +249,7 @@ public final class ImageLoopEditor {
                                 	//since we add before the current item, the next should always be the first we added
                                 	lLoopImage.next();
                         		}
-                				
-                        		else {
-                        			System.out.println("Warning: " + remainder + " is not in images folder");
-                        		}
-                			}
+                        			//System.out.println("Warning: " + remainder + " is not in images folder");
                 			
                 			loadFromFileScanner.close();
                 		}
